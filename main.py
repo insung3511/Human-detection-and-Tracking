@@ -19,13 +19,7 @@ count = 0
 
 
 def detect_people(frame):
-    """
-    detect humans using HOG descriptor
-    Args:
-        frame:
-    Returns:
-        processed frame
-    """
+    
     (rects, weights) = hog.detectMultiScale(frame, winStride=(8, 8), padding=(16, 16), scale=1.06)
     rects = non_max_suppression(rects, probs=None, overlapThresh=0.65)
     for (x, y, w, h) in rects:
@@ -34,26 +28,11 @@ def detect_people(frame):
 
 
 def detect_face(frame):
-    """
-    detect human faces in image using haar-cascade
-    Args:
-        frame:
-    Returns:
-    coordinates of detected faces
-    """
     faces = face_cascade.detectMultiScale(frame, 1.1, 2, 0, (20, 20))
     return faces
 
 
 def recognize_face(frame_orginal, faces):
-    """
-    recognize human faces using LBPH features
-    Args:
-        frame_orginal:
-        faces:
-    Returns:
-        label of predicted person
-    """
     predict_label = []
     predict_conf = []
     for x, y, w, h in faces:
@@ -68,14 +47,6 @@ def recognize_face(frame_orginal, faces):
 
 
 def draw_faces(frame, faces):
-    """
-    draw rectangle around detected faces
-    Args:
-        frame:
-        faces:
-    Returns:
-    face drawn processed frame
-    """
     for (x, y, w, h) in faces:
         xA = x
         yA = y
@@ -86,15 +57,6 @@ def draw_faces(frame, faces):
 
 
 def put_label_on_face(frame, faces, labels):
-    """
-    draw label on faces
-    Args:
-        frame:
-        faces:
-        labels:
-    Returns:
-        processed frame
-    """
     i = 0
     for x, y, w, h in faces:
         cv2.putText(frame, str(labels[i]), (x, y), font, 1, (255, 255, 255), 2)
@@ -103,15 +65,6 @@ def put_label_on_face(frame, faces, labels):
 
 
 def background_subtraction(previous_frame, frame_resized_grayscale, min_area):
-    """
-    This function returns 1 for the frames in which the area
-    after subtraction with previous frame is greater than minimum area
-    defined.
-    Thus expensive computation of human detection face detection
-    and face recognition is not done on all the frames.
-    Only the frames undergoing significant amount of change (which is controlled min_area)
-    are processed for detection and recognition.
-    """
     frameDelta = cv2.absdiff(previous_frame, frame_resized_grayscale)
     thresh = cv2.threshold(frameDelta, 25, 255, cv2.THRESH_BINARY)[1]
     thresh = cv2.dilate(thresh, None, iterations=2)
@@ -125,9 +78,6 @@ def background_subtraction(previous_frame, frame_resized_grayscale, min_area):
 
 
 if __name__ == '__main__':
-    """
-    main function
-    """
     ap = argparse.ArgumentParser()
     ap.add_argument("-v", "--videos", required=True, help="path to videos directory")
     args = vars(ap.parse_args())
